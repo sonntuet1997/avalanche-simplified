@@ -1,4 +1,5 @@
 FROM golang:1.19-alpine AS builder
+ARG MODULE
 ENV GOPRIVATE=gitlab.com
 RUN apk add --no-cache git
 COPY ./src /go/src
