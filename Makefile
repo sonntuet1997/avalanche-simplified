@@ -1,8 +1,4 @@
-up:
-	docker-compose up
-
-down:
-	docker-compose down
+IMAGE_NAME ?= sonntuet1997/avalanche
 
 lint:
 	golint -set_exit_status ./...
@@ -20,7 +16,16 @@ run-worker:
 	cd src/worker && go run .
 
 build-worker:
-	cd src/worker && go run .
+	docker build . -t $(IMAGE_NAME):lastest
 
-build-worker-docker:
-	cd src/worker && go run .
+run-200-worker-docker:
+	for i in {1..200}
+	do
+		docker run -d --name container-$i $(IMAGE_NAME)
+	done
+
+stop-200-worker-docker:
+	for i in {1..200}
+	do
+		docker stop -d --name container-$i
+	done
