@@ -1,8 +1,6 @@
 app:
-  logging.development: true
   cron:
     jobs:
       SelfIntroductionJob:
         expression: "@every 2s"
-  p2p:
-    port: 5555
+        disable: true

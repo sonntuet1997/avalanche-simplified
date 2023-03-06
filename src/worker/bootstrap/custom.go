@@ -1,15 +1,14 @@
 package bootstrap
 
 import (
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/properties"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/services"
-	"gitlab.com/golibs-starter/golib"
+	"github.com/sonntuet1997/avalanche-simplyfied/worker/jobs"
+	golibcron "gitlab.com/golibs-starter/golib-cron"
 	"go.uber.org/fx"
 )
 
 func Custom() fx.Option {
 	return fx.Options(
-		golib.ProvideProps(properties.NewP2pProperties),
-		fx.Provide(services.NewP2pService),
+		golibcron.ProvideJob(jobs.NewSelfIntroductionJob),
+		P2pOpt(),
 	)
 }
