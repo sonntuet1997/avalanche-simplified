@@ -3,7 +3,8 @@ package properties
 import "gitlab.com/golibs-starter/golib/config"
 
 type P2pProperties struct {
-	Port int
+	BroadcastPort     int
+	ListenToBroadcast bool `default:"true"`
 }
 
 func NewP2pProperties(loader config.Loader) (*P2pProperties, error) {
@@ -12,7 +13,7 @@ func NewP2pProperties(loader config.Loader) (*P2pProperties, error) {
 	if err != nil {
 		return nil, err
 	}
-	if props.Port < 1000 || props.Port > 65535 {
+	if props.BroadcastPort < 1000 || props.BroadcastPort > 65535 {
 		panic("invalid port number")
 	}
 	return &props, err

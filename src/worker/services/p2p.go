@@ -7,6 +7,7 @@ import (
 	"github.com/sonntuet1997/avalanche-simplyfied/worker/properties"
 	"gitlab.com/golibs-starter/golib/log"
 	"net"
+	"time"
 )
 
 type P2pService struct {
@@ -31,7 +32,7 @@ const (
 )
 
 func (p *P2pService) SelfIntroduce() error {
-	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf(broadcastAddrTmp, p.P2pProperties.Port))
+	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf(broadcastAddrTmp, p.P2pProperties.BroadcastPort))
 	if err != nil {
 		return fmt.Errorf("failed to ResolveUDPAddr with error: %w", err)
 	}
@@ -40,7 +41,7 @@ func (p *P2pService) SelfIntroduce() error {
 		return fmt.Errorf("failed to DialUDP with error: %w", err)
 	}
 	defer conn.Close()
-	message := "."
+	message := "+"
 	_, err = conn.Write([]byte(message))
 	if err != nil {
 		return fmt.Errorf("failed to write message with error: %w", err)
@@ -48,8 +49,29 @@ func (p *P2pService) SelfIntroduce() error {
 	return nil
 }
 
+func (p *P2pService) SendLeavingSignals(numberSignals int) error {
+	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf(broadcastAddrTmp, p.P2pProperties.BroadcastPort))
+	if err != nil {
+		return fmt.Errorf("failed to ResolveUDPAddr with error: %w", err)
+	}
+	conn, err := net.DialUDP(protocol, nil, addr)
+	if err != nil {
+		return fmt.Errorf("failed to DialUDP with error: %w", err)
+	}
+	defer conn.Close()
+	message := "-"
+	for i := 0; i < numberSignals; i++ {
+		_, err = conn.Write([]byte(message))
+		if err != nil {
+			return fmt.Errorf("failed to write message with error: %w", err)
+		}
+		time.Sleep(time.Second)
+	}
+	return nil
+}
+
 func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
-	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf(portTmp, p.P2pProperties.Port))
+	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf(portTmp, p.P2pProperties.BroadcastPort))
 	if err != nil {
 		log.Errorf("failed to ResolveUDPAddr with error: %w", err)
 		return

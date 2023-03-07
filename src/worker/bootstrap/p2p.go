@@ -17,10 +17,12 @@ func P2pOpt() fx.Option {
 	)
 }
 
-func OnStartP2pService(lc fx.Lifecycle, p2pService *services.P2pService) {
+func OnStartP2pService(lc fx.Lifecycle, p2pService *services.P2pService, p2pProperties *properties.P2pProperties) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			go p2pService.ListenForBroadcasts(context.Background())
+			if p2pProperties.ListenToBroadcast {
+				go p2pService.ListenForBroadcasts(context.Background())
+			}
 			return nil
 		},
 	})
