@@ -2,8 +2,8 @@ package tests
 
 import (
 	"context"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/bootstrap"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/services"
+	"github.com/sonntuet1997/avalanche-simplified/worker/bootstrap"
+	"github.com/sonntuet1997/avalanche-simplified/worker/services"
 	"gitlab.com/golibs-starter/golib"
 	golibcrontestsuite "gitlab.com/golibs-starter/golib-cron/testsuite"
 	golibtest "gitlab.com/golibs-starter/golib-test"

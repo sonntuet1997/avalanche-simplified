@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/jobs"
+	"github.com/sonntuet1997/avalanche-simplified/worker/jobs"
 	golibcron "gitlab.com/golibs-starter/golib-cron"
 	"go.uber.org/fx"
 )

@@ -3,7 +3,7 @@ package tests
 import (
 	"context"
 	"github.com/ecodia/golang-awaitility/awaitility"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/tests/mocks"
+	"github.com/sonntuet1997/avalanche-simplified/worker/tests/mocks"
 	"github.com/stretchr/testify/assert"
 	golibcrontestsuite "gitlab.com/golibs-starter/golib-cron/testsuite"
 	"gitlab.com/golibs-starter/golib/log"

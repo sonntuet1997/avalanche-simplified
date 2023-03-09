@@ -2,8 +2,8 @@ package bootstrap
 
 import (
 	"context"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/properties"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/services"
+	"github.com/sonntuet1997/avalanche-simplified/worker/properties"
+	"github.com/sonntuet1997/avalanche-simplified/worker/services"
 	"gitlab.com/golibs-starter/golib"
 	"go.uber.org/fx"
 )

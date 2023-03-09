@@ -1,2 +1,2 @@
-# avalanche-simplyfied
-# avalanche-simplyfied
+# avalanche-simplified
+# avalanche-simplified

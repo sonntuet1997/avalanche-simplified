@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/bootstrap"
+	"github.com/sonntuet1997/avalanche-simplified/worker/bootstrap"
 	"go.uber.org/fx"
 )
 

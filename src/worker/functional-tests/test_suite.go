@@ -2,7 +2,7 @@ package tests
 
 import (
 	"context"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/bootstrap"
+	"github.com/sonntuet1997/avalanche-simplified/worker/bootstrap"
 	"gitlab.com/golibs-starter/golib"
 	golibtest "gitlab.com/golibs-starter/golib-test"
 	"go.uber.org/fx"

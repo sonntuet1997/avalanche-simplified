@@ -1,4 +1,4 @@
-module github.com/sonntuet1997/avalanche-simplyfied/worker
+module github.com/sonntuet1997/avalanche-simplified/worker
 
 go 1.19
 

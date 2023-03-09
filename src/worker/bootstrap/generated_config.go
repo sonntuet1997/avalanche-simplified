@@ -3,7 +3,7 @@
 package bootstrap
 
 import (
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/routers"
+	"github.com/sonntuet1997/avalanche-simplified/worker/routers"
 	"gitlab.com/golibs-starter/golib"
 	golibcron "gitlab.com/golibs-starter/golib-cron"
 	golibgin "gitlab.com/golibs-starter/golib-gin"

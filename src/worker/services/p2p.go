@@ -3,8 +3,8 @@ package services
 import (
 	"context"
 	"fmt"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/entities"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/properties"
+	"github.com/sonntuet1997/avalanche-simplified/worker/entities"
+	"github.com/sonntuet1997/avalanche-simplified/worker/properties"
 	"gitlab.com/golibs-starter/golib/log"
 	"net"
 	"time"

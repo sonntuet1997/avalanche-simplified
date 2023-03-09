@@ -2,7 +2,7 @@ package jobs
 
 import (
 	"github.com/robfig/cron/v3"
-	"github.com/sonntuet1997/avalanche-simplyfied/worker/services"
+	"github.com/sonntuet1997/avalanche-simplified/worker/services"
 	"gitlab.com/golibs-starter/golib/log"
 	"go.uber.org/fx"
 )
