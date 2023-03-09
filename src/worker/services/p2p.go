@@ -84,30 +84,36 @@ func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
 	defer conn.Close()
 	ctx, cancelFunc := context.WithCancel(ctx)
 	p.CancelFunction = &cancelFunc
-	opening := true
 	go func() {
 		for {
 			select {
 			case <-ctx.Done():
 				log.Debugf("[P2pService] Received Done Signal")
-				opening = false
 				return
+			default:
+				buf := make([]byte, 1024)
+				err = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+				if err != nil {
+					log.Errorf("Error SetReadDeadline: %+v", err)
+					return
+				}
+				n, nodeAddr, err := conn.ReadFromUDP(buf)
+				if err != nil {
+					if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
+						continue
+					}
+					log.Errorf("Error reading UDP message: %+v", err)
+					continue
+				}
+				log.Debugf("Received broadcast from %+v %+v", nodeAddr.String(), string(buf[:n]))
+				p.NeighborNodes[nodeAddr.String()] = &entities.Node{
+					Address: nodeAddr.String(),
+				}
 			}
 		}
 	}()
-	for opening {
-		buf := make([]byte, 1024)
-		n, nodeAddr, err := conn.ReadFromUDP(buf)
-		if err != nil {
-			log.Errorf("Error reading UDP message: %+v", err)
-			continue
-		}
-		log.Debugf("Received broadcast from %+v %+v", nodeAddr.String(), string(buf[:n]))
-		p.NeighborNodes[nodeAddr.String()] = &entities.Node{
-			Address: nodeAddr.String(),
-		}
-	}
-	log.Debugf("[P2pService] Exiting ListenForBroadcasts")
+	<-ctx.Done()
+	log.Debugf("[P2pService] Leaving")
 }
 
 func (p *P2pService) Close() error {

@@ -11,26 +11,12 @@ import (
 )
 
 func init() {
-	// init node 1
 	err := fx.New(
 		bootstrap.All(),
-		golib.ProvidePropsOption(golib.WithActiveProfiles([]string{"testing_node1"})),
+		golib.ProvidePropsOption(golib.WithActiveProfiles([]string{"testing"})),
 		golib.ProvidePropsOption(golib.WithPaths([]string{"../config/"})),
 		golibtest.EnableWebTestUtil(),
 		golibcrontestsuite.EnableCronTestSuite(),
-		fx.Invoke(func(client *services.P2pService) {
-			P2pService = client
-		}),
-	).Start(context.Background())
-	if err != nil {
-		panic(err)
-	}
-	// init node 2
-	err = fx.New(
-		bootstrap.All(),
-		golib.ProvidePropsOption(golib.WithActiveProfiles([]string{"testing_node2"})),
-		golib.ProvidePropsOption(golib.WithPaths([]string{"../config/"})),
-		golibtest.EnableWebTestUtil(),
 		fx.Invoke(func(client *services.P2pService) {
 			P2pService = client
 		}),

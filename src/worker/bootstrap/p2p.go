@@ -21,7 +21,10 @@ func OnStartP2pService(lc fx.Lifecycle, p2pService *services.P2pService, p2pProp
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			if p2pProperties.ListenToBroadcast {
-				go p2pService.ListenForBroadcasts(context.Background())
+				go func() {
+					p2pService.ListenForBroadcasts(context.Background())
+
+				}()
 			}
 			return nil
 		},
