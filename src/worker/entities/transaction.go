@@ -1,5 +1,7 @@
 package entities
 
 type Transaction struct {
-	Id int `json:"id"`
+	ID    string `json:"id"`
+	Major int    `json:"major"`
+	Minor int    `json:"minor"`
 }
