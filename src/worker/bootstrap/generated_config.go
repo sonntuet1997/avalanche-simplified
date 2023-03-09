@@ -3,7 +3,10 @@
 package bootstrap
 
 import (
+	"github.com/sonntuet1997/avalanche-simplyfied/worker/routers"
 	"gitlab.com/golibs-starter/golib"
+	golibcron "gitlab.com/golibs-starter/golib-cron"
+	golibgin "gitlab.com/golibs-starter/golib-gin"
 	"go.uber.org/fx"
 )
 
@@ -15,9 +18,14 @@ func GeneratedConfig() fx.Option {
 		golib.EventOpt(),
 		golib.BuildInfoOpt(Version, CommitHash, BuildTime),
 		golib.ActuatorEndpointOpt(),
+		golibgin.GinHttpServerOpt(),
+		fx.Invoke(routers.RegisterHandlers),
+		fx.Invoke(routers.RegisterGinRouters),
+		golibcron.EnableCron(),
 		// Graceful shutdown.
 		// OnStop hooks will run in reverse order.
 		// golib.OnStopEventOpt() MUST be first
 		golib.OnStopEventOpt(),
+		golibgin.OnStopHttpServerOpt(),
 	)
 }
