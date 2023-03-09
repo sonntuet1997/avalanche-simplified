@@ -1,1 +1,17 @@
 version: '3.7'
+services:
+  node:
+    image: "sonntuet1997/avalanche-simplified:latest"
+    build:
+      dockerfile: Dockerfile
+    environment:
+      APP_PROFILE: prod
+    networks:
+
+  client_node:
+    image: "sonntuet1997/avalanche-simplified:latest"
+    build:
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - .:/src/app
