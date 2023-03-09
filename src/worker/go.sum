@@ -73,6 +73,10 @@ github.com/creasty/defaults v1.5.2/go.mod h1:FPZ+Y0WNrbqOVw+c6av63eyHUAl6pMHZwqL
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/deliveryhero/pipeline v0.4.0 h1:rQ6qHTApvVFouP9Y02k53KoFX+myuO6/OAxVX34iXvo=
+github.com/deliveryhero/pipeline v0.4.0/go.mod h1:78CQfQT2DONSGPktr7X71xu333ZMPdrcYuV/gY/Mnkg=
+github.com/deliveryhero/pipeline/v2 v2.1.1 h1:voM9cCSUVihQCzbQrF/UsZPUnw3t+j672HBuOR+ePgA=
+github.com/deliveryhero/pipeline/v2 v2.1.1/go.mod h1:QKhT6xfc0r8xq4cPFcRdhXf5fCKA2F3d+h3T/w6IAA8=
 github.com/ecodia/golang-awaitility v0.0.0-20180710094957-fb55e59708c7 h1:6kl2nUM+awj5vm8m9ES2FtWa7kZSsNMRD4hQosPACKs=
 github.com/ecodia/golang-awaitility v0.0.0-20180710094957-fb55e59708c7/go.mod h1:etn7NbLy5UviLk20XMZbSn/0AigF3Zfx7wwaEZ3fyIk=
 github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=

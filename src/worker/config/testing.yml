@@ -8,6 +8,11 @@ app:
         disable: true
   p2p:
     broadcastPort: 5555
+    minConnectedNodes: 200 # (n) wait until reach a minimum number of participants to start
+  consensus:
+    k: 20 #(sample size): between 1 and n
+    alpha: 14 #(quorum size): between 1 and k
+    beta: 20 #(decision threshold): >= 1
 
   consensus:
     n: 200 # wait until reach a minimum number of participants to start

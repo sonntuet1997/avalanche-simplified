@@ -4,6 +4,7 @@ import "gitlab.com/golibs-starter/golib/config"
 
 type P2pProperties struct {
 	BroadcastPort     int
+	MinConnectedNodes int
 	ListenToBroadcast bool `default:"true"`
 }
 

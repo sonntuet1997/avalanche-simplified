@@ -6,23 +6,29 @@ import (
 	"github.com/sonntuet1997/avalanche-simplified/worker/entities"
 	"github.com/sonntuet1997/avalanche-simplified/worker/properties"
 	"gitlab.com/golibs-starter/golib/log"
+	"math/rand"
 	"net"
+	"sync"
 	"time"
 )
 
 type P2pService struct {
-	P2pProperties  *properties.P2pProperties
-	NeighborNodes  map[string]*entities.Node // address -> node
-	CancelFunction *context.CancelFunc
+	P2pProperties     *properties.P2pProperties
+	NeighborNodes     map[string]*entities.Node // address -> node
+	CancelFunction    *context.CancelFunc
+	CachedRandomNodes []*entities.Node
+	Wg                sync.WaitGroup
 }
 
 func NewP2pService(
 	P2pProperties *properties.P2pProperties,
 ) *P2pService {
-	return &P2pService{
+	service := P2pService{
 		P2pProperties: P2pProperties,
 		NeighborNodes: make(map[string]*entities.Node, 0),
 	}
+	service.Wg.Add(P2pProperties.MinConnectedNodes)
+	return &service
 }
 
 const (
@@ -47,6 +53,36 @@ func (p *P2pService) SelfIntroduce() error {
 		return fmt.Errorf("failed to write message with error: %w", err)
 	}
 	return nil
+}
+
+func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
+	if nodesNumber > p.P2pProperties.MinConnectedNodes {
+		panic("wrong config!")
+	}
+	p.Wg.Wait()
+	if p.CachedRandomNodes != nil && len(p.CachedRandomNodes) == nodesNumber {
+		return p.CachedRandomNodes, nil
+	}
+	neighborNodes := make([]*entities.Node, 0, len(p.NeighborNodes))
+	for _, v := range p.NeighborNodes {
+		neighborNodes = append(neighborNodes, v)
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	randomElements := make([]*entities.Node, nodesNumber)
+
+	uniqueIndices := make(map[int]bool)
+	for len(uniqueIndices) < nodesNumber {
+		uniqueIndices[rand.Intn(len(p.NeighborNodes))] = true
+	}
+	i := 0
+	for index := range uniqueIndices {
+		randomElements[i] = neighborNodes[index]
+		i++
+	}
+	// TODO: not safe for concurrency
+	p.CachedRandomNodes = randomElements
+	return randomElements, nil
 }
 
 func (p *P2pService) SendLeavingSignals(numberSignals int) error {
@@ -106,8 +142,11 @@ func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
 					continue
 				}
 				log.Debugf("Received broadcast from %+v %+v", nodeAddr.String(), string(buf[:n]))
-				p.NeighborNodes[nodeAddr.String()] = &entities.Node{
-					Address: nodeAddr.String(),
+				if _, ok := p.NeighborNodes[nodeAddr.String()]; !ok {
+					p.NeighborNodes[nodeAddr.String()] = &entities.Node{
+						Address: nodeAddr.String(),
+					}
+					p.Wg.Done()
 				}
 			}
 		}

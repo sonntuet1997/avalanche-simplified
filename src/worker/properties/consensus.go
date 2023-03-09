@@ -3,7 +3,6 @@ package properties
 import "gitlab.com/golibs-starter/golib/config"
 
 type ConsensusProperties struct {
-	N     int
 	K     int
 	Alpha int
 	Beta  int
