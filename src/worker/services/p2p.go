@@ -152,14 +152,14 @@ func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
 					log.Errorf("Error reading UDP message: %+v", err)
 					continue
 				}
-				if _, ok := p.LocalAddresses[nodeAddr.String()]; ok {
+				if _, ok := p.LocalAddresses[nodeAddr.IP.String()]; ok {
 					log.Debugf("Filtered your own broadcast message from %+v %+v", nodeAddr.String(), string(buf[:n]))
 					continue
 				}
 				log.Debugf("Received broadcast from %+v %+v", nodeAddr.String(), string(buf[:n]))
-				if _, ok := p.NeighborNodes[nodeAddr.String()]; !ok {
-					p.NeighborNodes[nodeAddr.String()] = &entities.Node{
-						Address: nodeAddr.String(),
+				if _, ok := p.NeighborNodes[nodeAddr.IP.String()]; !ok {
+					p.NeighborNodes[nodeAddr.IP.String()] = &entities.Node{
+						Address: nodeAddr.IP.String(),
 					}
 					p.Wg.Done()
 				}
