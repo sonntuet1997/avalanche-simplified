@@ -16,6 +16,7 @@ type P2pService struct {
 	P2pProperties  *properties.P2pProperties
 	NeighborNodes  map[string]*entities.Node // address -> node
 	CancelFunction *context.CancelFunc
+	LocalAddresses map[string]interface{}
 	Wg             sync.WaitGroup
 }
 
@@ -28,6 +29,21 @@ func NewP2pService(
 	}
 	service.Wg.Add(P2pProperties.MinConnectedNodes)
 	return &service
+}
+
+func (p *P2pService) getLocalAddresses() {
+	result := make(map[string]interface{})
+	addresses, err := net.InterfaceAddrs()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, addr := range addresses {
+		ipnet, ok := addr.(*net.IPNet)
+		if ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
+			result[ipnet.IP.String()] = struct{}{}
+		}
+	}
+	p.LocalAddresses = result
 }
 
 const (
@@ -133,6 +149,10 @@ func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
 						continue
 					}
 					log.Errorf("Error reading UDP message: %+v", err)
+					continue
+				}
+				if _, ok := p.LocalAddresses[nodeAddr.String()]; ok {
+					log.Debugf("Filtered your own broadcast message from %+v %+v", nodeAddr.String(), string(buf[:n]))
 					continue
 				}
 				log.Debugf("Received broadcast from %+v %+v", nodeAddr.String(), string(buf[:n]))
