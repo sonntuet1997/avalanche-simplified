@@ -3,12 +3,12 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/sonntuet1997/avalanche-simplified/worker/constants"
 	"github.com/sonntuet1997/avalanche-simplified/worker/entities"
 	"github.com/sonntuet1997/avalanche-simplified/worker/properties"
 	"gitlab.com/golibs-starter/golib/log"
 	"math/rand"
 	"net"
-	"sync"
 	"time"
 )
 
@@ -17,7 +17,6 @@ type P2pService struct {
 	NeighborNodes  map[string]*entities.Node // address -> node
 	CancelFunction *context.CancelFunc
 	LocalAddresses map[string]interface{}
-	Wg             sync.WaitGroup
 }
 
 func NewP2pService(
@@ -27,7 +26,6 @@ func NewP2pService(
 		P2pProperties: P2pProperties,
 		NeighborNodes: make(map[string]*entities.Node, 0),
 	}
-	service.Wg.Add(P2pProperties.MinConnectedNodes)
 	service.getLocalAddresses()
 	return &service
 }
@@ -75,7 +73,9 @@ func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
 	if nodesNumber > p.P2pProperties.MinConnectedNodes {
 		panic("wrong config!")
 	}
-	p.Wg.Wait()
+	if nodesNumber > len(p.NeighborNodes) {
+		return nil, constants.ErrNotEnoughNeighborNodes
+	}
 	neighborNodes := make([]*entities.Node, 0, len(p.NeighborNodes))
 	for _, v := range p.NeighborNodes {
 		neighborNodes = append(neighborNodes, v)
@@ -161,7 +161,6 @@ func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
 					p.NeighborNodes[nodeAddr.IP.String()] = &entities.Node{
 						Address: nodeAddr.IP.String(),
 					}
-					p.Wg.Done()
 				}
 			}
 		}
