@@ -3,9 +3,11 @@ module github.com/sonntuet1997/avalanche-simplified/worker
 go 1.19
 
 require (
+	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/deliveryhero/pipeline/v2 v2.1.1
 	github.com/ecodia/golang-awaitility v0.0.0-20180710094957-fb55e59708c7
 	github.com/gin-gonic/gin v1.9.0
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/robfig/cron/v3 v3.0.2-0.20210106135023-bc59245fe10e
 	github.com/stretchr/testify v1.8.1
 	gitlab.com/golibs-starter/golib v0.12.4

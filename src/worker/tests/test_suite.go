@@ -20,6 +20,9 @@ func init() {
 		fx.Invoke(func(client *services.P2pService) {
 			P2pService = client
 		}),
+		fx.Invoke(func(client *services.ConsensusService) {
+			ConsensusService = client
+		}),
 	).Start(context.Background())
 	if err != nil {
 		panic(err)
@@ -27,3 +30,4 @@ func init() {
 }
 
 var P2pService *services.P2pService
+var ConsensusService *services.ConsensusService

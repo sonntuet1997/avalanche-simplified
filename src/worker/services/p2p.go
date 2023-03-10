@@ -13,11 +13,10 @@ import (
 )
 
 type P2pService struct {
-	P2pProperties     *properties.P2pProperties
-	NeighborNodes     map[string]*entities.Node // address -> node
-	CancelFunction    *context.CancelFunc
-	CachedRandomNodes []*entities.Node
-	Wg                sync.WaitGroup
+	P2pProperties  *properties.P2pProperties
+	NeighborNodes  map[string]*entities.Node // address -> node
+	CancelFunction *context.CancelFunc
+	Wg             sync.WaitGroup
 }
 
 func NewP2pService(
@@ -60,9 +59,6 @@ func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
 		panic("wrong config!")
 	}
 	p.Wg.Wait()
-	if p.CachedRandomNodes != nil && len(p.CachedRandomNodes) == nodesNumber {
-		return p.CachedRandomNodes, nil
-	}
 	neighborNodes := make([]*entities.Node, 0, len(p.NeighborNodes))
 	for _, v := range p.NeighborNodes {
 		neighborNodes = append(neighborNodes, v)
@@ -80,8 +76,6 @@ func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
 		randomElements[i] = neighborNodes[index]
 		i++
 	}
-	// TODO: not safe for concurrency
-	p.CachedRandomNodes = randomElements
 	return randomElements, nil
 }
 
