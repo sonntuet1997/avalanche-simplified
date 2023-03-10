@@ -2,10 +2,21 @@ version: '3.7'
 networks:
   avalanche:
     name: avalanche
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/16
 
 services:
   node:
-    image: "sonntuet1997/avalanche-simplified:latest"
+    deploy:
+      replicas: 25
+      resources:
+        limits:
+          memory: "100M"
+        reservations:
+          memory: "10M"
     build:
       context: .
       dockerfile: Dockerfile
@@ -27,5 +38,7 @@ services:
       - .:/go/src/avalanche
     working_dir: /go/src/avalanche
     command: sleep 1000000
+    cap_add:
+      - NET_ADMIN
     networks:
       - avalanche
