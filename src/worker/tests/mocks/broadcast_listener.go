@@ -17,7 +17,7 @@ type BroadcastListener struct {
 func NewBroadcastListener(port int) *BroadcastListener {
 	return &BroadcastListener{
 		Port:         port,
-		InputChannel: make(chan string, 0),
+		InputChannel: make(chan string),
 	}
 }
 

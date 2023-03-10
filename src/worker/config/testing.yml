@@ -3,8 +3,19 @@ app:
   logging.development: true
   cron:
     jobs:
-      SelfIntroductionJob:
-        expression: "@every 2s"
+      selfIntroductionJob:
+        expression: "@every 5s"
+        disable: true
+      fetchTransactionJob:
+        expression: "@every 500ms"
         disable: true
   p2p:
     broadcastPort: 5555
+    minConnectedNodes: 4 # (n) wait until reach a minimum number of participants to start
+  consensus:
+    k: 3 #(sample size): between 1 and n
+    alpha: 3 #(quorum size): between 1 and k
+    beta: 2 #(decision threshold): >= 1
+    timeout: "10s" # max duration to collect other nodes preferences
+  random:
+    range: 2

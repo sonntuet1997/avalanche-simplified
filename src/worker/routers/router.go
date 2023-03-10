@@ -3,7 +3,9 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sonntuet1997/avalanche-simplified/worker/controllers"
 	"gitlab.com/golibs-starter/golib"
 	golibgin "gitlab.com/golibs-starter/golib-gin"
 	"gitlab.com/golibs-starter/golib/web/actuator"
@@ -13,9 +15,10 @@ import (
 // RegisterRoutersIn represents constructor params for fx
 type RegisterRoutersIn struct {
 	fx.In
-	App      *golib.App
-	Engine   *gin.Engine
-	Actuator *actuator.Endpoint
+	App            *golib.App
+	Engine         *gin.Engine
+	Actuator       *actuator.Endpoint
+	NodeController *controllers.NodeController
 }
 
 // RegisterHandlers register handlers
@@ -29,4 +32,10 @@ func RegisterGinRouters(p RegisterRoutersIn) {
 	group := p.Engine.Group(p.App.Path())
 	group.GET("/actuator/health", gin.WrapF(p.Actuator.Health))
 	group.GET("/actuator/info", gin.WrapF(p.Actuator.Info))
+	v1 := p.Engine.Group(fmt.Sprintf("%s/v1", p.App.Path()))
+	node := v1.Group("/node")
+	{
+		node.GET("/transactions", p.NodeController.GetConfirmedTransactions)
+		node.GET("/prefer-transactions/:block_number", p.NodeController.GetPreferTransaction)
+	}
 }
