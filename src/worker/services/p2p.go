@@ -9,6 +9,7 @@ import (
 	"gitlab.com/golibs-starter/golib/log"
 	"math/rand"
 	"net"
+	"sync"
 	"time"
 )
 
@@ -17,6 +18,7 @@ type P2pService struct {
 	NeighborNodes  map[string]*entities.Node // address -> node
 	CancelFunction *context.CancelFunc
 	LocalAddresses map[string]interface{}
+	RWMutex        sync.RWMutex
 }
 
 func NewP2pService(
@@ -76,10 +78,7 @@ func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
 	if nodesNumber > len(p.NeighborNodes) {
 		return nil, constants.ErrNotEnoughNeighborNodes
 	}
-	neighborNodes := make([]*entities.Node, 0, len(p.NeighborNodes))
-	for _, v := range p.NeighborNodes {
-		neighborNodes = append(neighborNodes, v)
-	}
+	neighborNodes := p.GetNeighborNodes()
 
 	rand.Seed(time.Now().UnixNano())
 	randomElements := make([]*entities.Node, nodesNumber)
@@ -94,6 +93,16 @@ func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
 		i++
 	}
 	return randomElements, nil
+}
+
+func (p *P2pService) GetNeighborNodes() []*entities.Node {
+	p.RWMutex.RLock()
+	defer p.RWMutex.RUnlock()
+	neighborNodes := make([]*entities.Node, 0, len(p.NeighborNodes))
+	for _, v := range p.NeighborNodes {
+		neighborNodes = append(neighborNodes, v)
+	}
+	return neighborNodes
 }
 
 func (p *P2pService) SendLeavingSignals(numberSignals int) error {
@@ -157,10 +166,15 @@ func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
 					continue
 				}
 				log.Debugf("Received broadcast from %+v %+v", nodeAddr.String(), string(buf[:n]))
-				if _, ok := p.NeighborNodes[nodeAddr.IP.String()]; !ok {
+				p.RWMutex.RLock()
+				_, ok := p.NeighborNodes[nodeAddr.IP.String()]
+				p.RWMutex.RUnlock()
+				if !ok {
+					p.RWMutex.Lock()
 					p.NeighborNodes[nodeAddr.IP.String()] = &entities.Node{
 						Address: nodeAddr.IP.String(),
 					}
+					p.RWMutex.Unlock()
 				}
 			}
 		}
