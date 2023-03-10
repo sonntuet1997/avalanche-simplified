@@ -28,6 +28,7 @@ func NewP2pService(
 		NeighborNodes: make(map[string]*entities.Node, 0),
 	}
 	service.Wg.Add(P2pProperties.MinConnectedNodes)
+	service.getLocalAddresses()
 	return &service
 }
 
