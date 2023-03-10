@@ -21,6 +21,8 @@ services:
     build:
       dockerfile: Dockerfile
       target: base_with_mod
+      args:
+        - MODULE=worker
     volumes:
       - .:/go/src/avalanche
     working_dir: /go/src/avalanche
