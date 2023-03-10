@@ -31,6 +31,9 @@ func TestE2e(t *testing.T) {
 					assert.Nil(t, err)
 					err = json.Unmarshal(res.Body(), &response)
 					assert.Nil(t, err)
+					if response.Data.Major == -1 {
+						return false
+					}
 					if checkResult != nil {
 						if checkResult.ID != response.Data.ID {
 							return false

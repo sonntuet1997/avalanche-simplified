@@ -20,7 +20,7 @@ services:
     image: "sonntuet1997/avalanche-client_node:latest"
     build:
       dockerfile: Dockerfile
-      target: base
+      target: base_with_mod
     volumes:
       - .:/go/src/avalanche
     working_dir: /go/src/avalanche
