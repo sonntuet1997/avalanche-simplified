@@ -15,7 +15,7 @@ func TestConsensus(t *testing.T) {
 				log.Debugf("[processor] %+v", input)
 				return input, nil
 			}, func(i int, err error) {
-				log.Errorf("[ConsensusService] failed to process with error: %w", err)
+				log.Errorf("[consensusService] failed to process with error: %w", err)
 			})
 		processOutputChan := pipeline.ProcessConcurrently(
 			ctx,

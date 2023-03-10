@@ -8,6 +8,7 @@ import (
 	golibcrontestsuite "gitlab.com/golibs-starter/golib-cron/testsuite"
 	golibtest "gitlab.com/golibs-starter/golib-test"
 	"go.uber.org/fx"
+	"net/http"
 )
 
 func init() {
@@ -18,10 +19,13 @@ func init() {
 		golibtest.EnableWebTestUtil(),
 		golibcrontestsuite.EnableCronTestSuite(),
 		fx.Invoke(func(client *services.P2pService) {
-			P2pService = client
+			p2pService = client
 		}),
 		fx.Invoke(func(client *services.ConsensusService) {
-			ConsensusService = client
+			consensusService = client
+		}),
+		fx.Invoke(func(client *http.Client) {
+			httpClient = client
 		}),
 	).Start(context.Background())
 	if err != nil {
@@ -29,5 +33,6 @@ func init() {
 	}
 }
 
-var P2pService *services.P2pService
-var ConsensusService *services.ConsensusService
+var p2pService *services.P2pService
+var consensusService *services.ConsensusService
+var httpClient *http.Client

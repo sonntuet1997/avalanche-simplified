@@ -34,6 +34,7 @@ func NewConsensusService(
 	P2pService *P2pService,
 	NodeRepository *http_client.NodeRepository,
 ) *ConsensusService {
+	rand.Seed(time.Now().UnixNano())
 	consensusService := &ConsensusService{
 		ConsensusProperties:   ConsensusProperties,
 		RandomProperties:      RandomProperties,
@@ -120,7 +121,7 @@ func (c *ConsensusService) UpdatePreferredTransaction(blockNumber int, collected
 	transactions := make(map[string]*entities.Transaction, 0)
 	counts := make(map[string]int, 0)
 	for _, neighborPreference := range collectedNeighborsPreferences {
-		if neighborPreference.Minor != blockNumber {
+		if neighborPreference.Major != blockNumber {
 			log.Warnf("[UpdatePreferredTransaction] block number not matched %+v %+v", neighborPreference, blockNumber)
 		}
 		transactions[neighborPreference.ID] = neighborPreference
@@ -155,7 +156,6 @@ func (c *ConsensusService) UpdatePreferredTransaction(blockNumber int, collected
 }
 
 func (c *ConsensusService) MakeRandomTransaction(blockNumber int) *entities.Transaction {
-	rand.Seed(time.Now().UnixNano())
 	randomValue := rand.Intn(c.RandomProperties.Range) + 1
 	return &entities.Transaction{
 		ID:    fmt.Sprintf("%d-%d", blockNumber, randomValue),

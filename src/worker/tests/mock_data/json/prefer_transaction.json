@@ -1,0 +1,11 @@
+{
+  "meta": {
+    "code": 200,
+    "message": "Successful"
+  },
+  "data": {
+    "id": "%s",
+    "major": %d,
+    "minor": %d
+  }
+}

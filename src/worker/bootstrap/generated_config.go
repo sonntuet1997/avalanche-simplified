@@ -3,11 +3,13 @@
 package bootstrap
 
 import (
+	"github.com/go-resty/resty/v2"
 	"github.com/sonntuet1997/avalanche-simplified/worker/routers"
 	"gitlab.com/golibs-starter/golib"
 	golibcron "gitlab.com/golibs-starter/golib-cron"
 	golibgin "gitlab.com/golibs-starter/golib-gin"
 	"go.uber.org/fx"
+	"net/http"
 )
 
 func GeneratedConfig() fx.Option {
@@ -22,6 +24,10 @@ func GeneratedConfig() fx.Option {
 		fx.Invoke(routers.RegisterHandlers),
 		fx.Invoke(routers.RegisterGinRouters),
 		golibcron.EnableCron(),
+		fx.Provide(func() *http.Client { return &http.Client{} }),
+		fx.Provide(func(client *http.Client) *resty.Client {
+			return resty.NewWithClient(client)
+		}),
 		// Graceful shutdown.
 		// OnStop hooks will run in reverse order.
 		// golib.OnStopEventOpt() MUST be first

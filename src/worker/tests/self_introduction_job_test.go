@@ -12,9 +12,9 @@ import (
 )
 
 func TestSelfIntroductionJob(t *testing.T) {
-	err := P2pService.Close()
+	err := p2pService.Close()
 	assert.Nil(t, err)
-	defer P2pService.ListenForBroadcasts(context.Background())
+	defer p2pService.ListenForBroadcasts(context.Background())
 	broadcastListener := mocks.NewBroadcastListener(5555)
 	err = awaitility.Await(time.Second, 5*time.Second, func() bool {
 		err = broadcastListener.ListenForBroadcasts(context.Background())
