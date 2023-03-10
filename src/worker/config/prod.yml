@@ -9,11 +9,11 @@ app:
         expression: "@every 500ms"
   p2p:
     broadcastPort: 5555
-    minConnectedNodes: 15 # (n) wait until reach a minimum number of participants to start
+    minConnectedNodes: 100 # (n) wait until reach a minimum number of participants to start
   consensus:
-    k: 8 #(sample size): between 1 and n
-    alpha: 6 #(quorum size): between 1 and k
-    beta: 6 #(decision threshold): >= 1
-    timeout: "10s" # max duration to collect other nodes preferences
+    k: 20 #(sample size): between 1 and n
+    alpha: 14 #(quorum size): between 1 and k
+    beta: 20 #(decision threshold): >= 1
+    timeout: "20s" # max duration to collect other nodes preferences
   random:
     range: 2

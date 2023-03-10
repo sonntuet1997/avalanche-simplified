@@ -1,5 +1,8 @@
 app:
+  logging:
+    development: true
+    jsonOutputMode: false
   testing:
-    toBlockNumber: 30
-    nodesNumber: 20
+    toBlockNumber: 60
+    nodesNumber: 200
     url: "http://avalanche-simplyfied-node-%d:8000/v1/node/prefer-transactions/%d"

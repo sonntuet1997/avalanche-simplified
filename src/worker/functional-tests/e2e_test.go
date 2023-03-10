@@ -36,7 +36,7 @@ func TestE2e(t *testing.T) {
 					}
 					if checkResult != nil {
 						if checkResult.ID != response.Data.ID {
-							log.Debugf("Diff data at block %+v for node nodeIndex between %+v and %+v", blockNumber, response.Data, checkResult)
+							log.Debugf("Diff data at block %+v for node %+v between %+v and %+v", blockNumber, nodeIndex, response.Data, checkResult)
 							return false
 						}
 					}

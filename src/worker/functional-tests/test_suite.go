@@ -9,6 +9,7 @@ import (
 func init() {
 	err := fx.New(
 		golib.PropertiesOpt(),
+		golib.LoggingOpt(),
 		golib.ProvideProps(NewTestingProperties),
 		golib.ProvidePropsOption(golib.WithActiveProfiles([]string{"default"})),
 		golib.ProvidePropsOption(golib.WithPaths([]string{"."})),
