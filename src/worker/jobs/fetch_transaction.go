@@ -29,8 +29,7 @@ func (r *FetchTransactionJob) Run() {
 	err := r.ConsensusService.FetchNewTransaction()
 	if errors.Is(err, constants.ErrNotEnoughNeighborNodes) {
 		log.Warnf("[FetchTransactionJob] %+v", err)
-	}
-	if err != nil {
+	} else if err != nil {
 		log.Errorf("[FetchTransactionJob] failed to FetchNewTransaction with error: %+v", err)
 	}
 	log.Debugf("[FetchTransactionJob] job stop")
