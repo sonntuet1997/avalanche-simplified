@@ -1,17 +1,28 @@
 version: '3.7'
+networks:
+  avalanche:
+    name: avalanche
+
 services:
   node:
     image: "sonntuet1997/avalanche-simplified:latest"
     build:
+      context: .
       dockerfile: Dockerfile
+      args:
+        - MODULE=worker
     environment:
-      APP_PROFILE: prod
+      APP_PROFILES: prod
+      APP_PATH: /
     networks:
-
+      - avalanche
   client_node:
-    image: "sonntuet1997/avalanche-simplified:latest"
+    image: "sonntuet1997/avalanche-client_node:latest"
     build:
       dockerfile: Dockerfile
-      target: builder
+      target: base
     volumes:
-      - .:/src/app
+      - .:/go/src/avalanche
+    working_dir: /go/src/avalanche
+    networks:
+      - avalanche

@@ -18,11 +18,11 @@ vet:
 run-worker:
 	cd src/worker && go run .
 
-build-worker:
+build-docker:
 	docker-compose build
-	docker build --build-arg MODULE=worker . -t $(IMAGE_NAME):lastest
 
 run-200-worker-docker:
-
+	docker-compose up -d
 
 stop-200-worker-docker:
+	docker-compose stop
