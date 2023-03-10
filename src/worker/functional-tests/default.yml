@@ -1,0 +1,5 @@
+app:
+  testing:
+    toBlockNumber: 30
+    nodesNumber: 20
+    url: "http://avalanche-simplyfied-node-%d:8000/v1/node/prefer-transactions/%d"

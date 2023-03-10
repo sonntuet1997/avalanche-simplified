@@ -22,7 +22,7 @@ build-docker:
 	docker-compose build
 
 run-200-worker-docker:
-	docker-compose up -d
+	docker-compose up -d --scale node=20
 
 stop-200-worker-docker:
 	docker-compose stop
