@@ -12,6 +12,9 @@ tidy:
 test:
 	cd src/worker && go mod tidy && go test ./...
 
+vet:
+	cd src/worker && go vet ./... && staticcheck ./...
+
 run-worker:
 	cd src/worker && go run .
 
