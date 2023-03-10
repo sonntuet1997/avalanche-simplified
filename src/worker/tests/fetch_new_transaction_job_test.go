@@ -13,9 +13,6 @@ import (
 )
 
 func setup(t *testing.T) {
-	for i := 0; i < 4; i++ {
-		p2pService.Wg.Done()
-	}
 	httpmock.ActivateNonDefault(httpClient)
 	httpmock.RegisterResponder(
 		"GET",
@@ -34,16 +31,16 @@ func TestFetchNewTransactionJob(t *testing.T) {
 	t.Run("given normal condition when run fetch new introduction job should return truthful-node data", func(t *testing.T) {
 		p2pService.NeighborNodes = map[string]*entities.Node{
 			"1": {
-				Address: "http://truthful-node",
+				Address: "truthful-node",
 			},
 			"2": {
-				Address: "http://truthful-node",
+				Address: "truthful-node",
 			},
 			"3": {
-				Address: "http://truthful-node",
+				Address: "truthful-node",
 			},
 			"4": {
-				Address: "http://adversary-node",
+				Address: "adversary-node",
 			},
 		}
 		consensusService.CurrentPreferenceTransaction = &entities.Transaction{

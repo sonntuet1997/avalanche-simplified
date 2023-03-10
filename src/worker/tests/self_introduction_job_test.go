@@ -19,7 +19,7 @@ func TestSelfIntroductionJob(t *testing.T) {
 	err = awaitility.Await(time.Second, 5*time.Second, func() bool {
 		err = broadcastListener.ListenForBroadcasts(context.Background())
 		if err != nil {
-			log.Debugf("failed with error: %w", err)
+			log.Debugf("ListenForBroadcasts failed with error: %w", err)
 		}
 		return err == nil
 	})
