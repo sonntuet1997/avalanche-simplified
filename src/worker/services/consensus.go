@@ -47,6 +47,7 @@ func NewConsensusService(
 		Major: 0,
 		Minor: 0,
 	})
+	consensusService.CurrentPreferenceTransaction = consensusService.MakeRandomTransaction(1)
 	return consensusService
 }
 
