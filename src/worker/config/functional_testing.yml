@@ -1,6 +1,0 @@
-app:
-  cron:
-    jobs:
-      SelfIntroductionJob:
-        expression: "@every 2s"
-        disable: true

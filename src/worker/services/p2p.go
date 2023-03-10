@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/sonntuet1997/avalanche-simplified/worker/constants"
 	"github.com/sonntuet1997/avalanche-simplified/worker/entities"
 	"github.com/sonntuet1997/avalanche-simplified/worker/properties"
 	"gitlab.com/golibs-starter/golib/log"
@@ -16,7 +17,8 @@ type P2pService struct {
 	P2pProperties  *properties.P2pProperties
 	NeighborNodes  map[string]*entities.Node // address -> node
 	CancelFunction *context.CancelFunc
-	Wg             sync.WaitGroup
+	LocalAddresses map[string]interface{}
+	RWMutex        sync.RWMutex
 }
 
 func NewP2pService(
@@ -26,8 +28,23 @@ func NewP2pService(
 		P2pProperties: P2pProperties,
 		NeighborNodes: make(map[string]*entities.Node, 0),
 	}
-	service.Wg.Add(P2pProperties.MinConnectedNodes)
+	service.getLocalAddresses()
 	return &service
+}
+
+func (p *P2pService) getLocalAddresses() {
+	result := make(map[string]interface{})
+	addresses, err := net.InterfaceAddrs()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, addr := range addresses {
+		ipnet, ok := addr.(*net.IPNet)
+		if ok && !ipnet.IP.IsLoopback() && ipnet.IP.To4() != nil {
+			result[ipnet.IP.String()] = struct{}{}
+		}
+	}
+	p.LocalAddresses = result
 }
 
 const (
@@ -58,11 +75,10 @@ func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
 	if nodesNumber > p.P2pProperties.MinConnectedNodes {
 		panic("wrong config!")
 	}
-	p.Wg.Wait()
-	neighborNodes := make([]*entities.Node, 0, len(p.NeighborNodes))
-	for _, v := range p.NeighborNodes {
-		neighborNodes = append(neighborNodes, v)
+	if nodesNumber > len(p.NeighborNodes) {
+		return nil, constants.ErrNotEnoughNeighborNodes
 	}
+	neighborNodes := p.GetNeighborNodes()
 
 	rand.Seed(time.Now().UnixNano())
 	randomElements := make([]*entities.Node, nodesNumber)
@@ -77,6 +93,16 @@ func (p *P2pService) GetRandomNodes(nodesNumber int) ([]*entities.Node, error) {
 		i++
 	}
 	return randomElements, nil
+}
+
+func (p *P2pService) GetNeighborNodes() []*entities.Node {
+	p.RWMutex.RLock()
+	defer p.RWMutex.RUnlock()
+	neighborNodes := make([]*entities.Node, 0, len(p.NeighborNodes))
+	for _, v := range p.NeighborNodes {
+		neighborNodes = append(neighborNodes, v)
+	}
+	return neighborNodes
 }
 
 func (p *P2pService) SendLeavingSignals(numberSignals int) error {
@@ -135,12 +161,20 @@ func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
 					log.Errorf("Error reading UDP message: %+v", err)
 					continue
 				}
+				if _, ok := p.LocalAddresses[nodeAddr.IP.String()]; ok {
+					log.Debugf("Filtered your own broadcast message from %+v %+v", nodeAddr.String(), string(buf[:n]))
+					continue
+				}
 				log.Debugf("Received broadcast from %+v %+v", nodeAddr.String(), string(buf[:n]))
-				if _, ok := p.NeighborNodes[nodeAddr.String()]; !ok {
-					p.NeighborNodes[nodeAddr.String()] = &entities.Node{
-						Address: nodeAddr.String(),
+				p.RWMutex.RLock()
+				_, ok := p.NeighborNodes[nodeAddr.IP.String()]
+				p.RWMutex.RUnlock()
+				if !ok {
+					p.RWMutex.Lock()
+					p.NeighborNodes[nodeAddr.IP.String()] = &entities.Node{
+						Address: nodeAddr.IP.String(),
 					}
-					p.Wg.Done()
+					p.RWMutex.Unlock()
 				}
 			}
 		}

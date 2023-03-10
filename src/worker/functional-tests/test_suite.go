@@ -2,20 +2,24 @@ package tests
 
 import (
 	"context"
-	"github.com/sonntuet1997/avalanche-simplified/worker/bootstrap"
 	"gitlab.com/golibs-starter/golib"
-	golibtest "gitlab.com/golibs-starter/golib-test"
 	"go.uber.org/fx"
 )
 
 func init() {
 	err := fx.New(
-		bootstrap.All(),
-		golib.ProvidePropsOption(golib.WithActiveProfiles([]string{"functional_testing"})),
-		golib.ProvidePropsOption(golib.WithPaths([]string{"../config/"})),
-		golibtest.EnableWebTestUtil(),
+		golib.PropertiesOpt(),
+		golib.LoggingOpt(),
+		golib.ProvideProps(NewTestingProperties),
+		golib.ProvidePropsOption(golib.WithActiveProfiles([]string{"default"})),
+		golib.ProvidePropsOption(golib.WithPaths([]string{"."})),
+		fx.Invoke(func(client *TestingProperties) {
+			testingProperties = client
+		}),
 	).Start(context.Background())
 	if err != nil {
 		panic(err)
 	}
 }
+
+var testingProperties *TestingProperties

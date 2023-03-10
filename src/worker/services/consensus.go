@@ -47,6 +47,7 @@ func NewConsensusService(
 		Major: 0,
 		Minor: 0,
 	})
+	consensusService.CurrentPreferenceTransaction = consensusService.MakeRandomTransaction(1)
 	return consensusService
 }
 
@@ -123,6 +124,7 @@ func (c *ConsensusService) UpdatePreferredTransaction(blockNumber int, collected
 	for _, neighborPreference := range collectedNeighborsPreferences {
 		if neighborPreference.Major != blockNumber {
 			log.Warnf("[UpdatePreferredTransaction] block number not matched %+v %+v", neighborPreference, blockNumber)
+			continue
 		}
 		transactions[neighborPreference.ID] = neighborPreference
 		counts[neighborPreference.ID]++

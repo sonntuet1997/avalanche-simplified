@@ -12,23 +12,20 @@ tidy:
 test:
 	cd src/worker && go mod tidy && go test ./...
 
+test-e2e:
+	cd src/worker/functional-tests && go mod tidy && OOS=linux GOARCH=amd64 CGO_ENABLED=0 go test ./... -v
+
 vet:
 	cd src/worker && go vet ./... && staticcheck ./...
 
 run-worker:
 	cd src/worker && go run .
 
-build-worker:
-	docker build --build-arg MODULE=worker . -t $(IMAGE_NAME):lastest
+build-docker:
+	docker-compose build
 
 run-200-worker-docker:
-	for i in {1..10}
-	do
-		docker run -d --name container-$i $(IMAGE_NAME)
-	done
+	docker-compose up -d
 
-stop-200-worker-docker:
-	for i in {1..10}
-	do
-		docker stop -d --name container-$i
-	done
+down-200-worker-docker:
+	docker-compose down
