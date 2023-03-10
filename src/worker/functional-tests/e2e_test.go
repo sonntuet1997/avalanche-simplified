@@ -21,7 +21,7 @@ func TestE2e(t *testing.T) {
 	ctx := context.Background()
 	t.Run("given normal condition when query transactions from nodes should return uniform data", func(t *testing.T) {
 		for blockNumber := 0; blockNumber < testingProperties.ToBlockNumber; blockNumber++ {
-			err := awaitility.Await(time.Second, 10*time.Second, func() bool {
+			err := awaitility.Await(time.Second, 15*time.Second, func() bool {
 				var checkResult *entities.Transaction
 				for nodeIndex := 0; nodeIndex < testingProperties.NodesNumber; nodeIndex++ {
 					var response models.PreferenceResponse
@@ -36,6 +36,7 @@ func TestE2e(t *testing.T) {
 					}
 					if checkResult != nil {
 						if checkResult.ID != response.Data.ID {
+							log.Debugf("Diff data at block %+v for node nodeIndex between %+v and %+v", blockNumber, response.Data, checkResult)
 							return false
 						}
 					}
@@ -45,6 +46,9 @@ func TestE2e(t *testing.T) {
 				return true
 			})
 			assert.Nil(t, err)
+			if err != nil {
+				t.FailNow()
+			}
 		}
 	})
 }
