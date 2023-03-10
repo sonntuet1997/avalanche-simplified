@@ -30,7 +30,7 @@ func NewNodeRepository(
 	}
 }
 
-var preferTransactionURLTemplate = "%s:%d%sv1/node/prefer-transactions/%d"
+var preferTransactionURLTemplate = "http://%s:%d%sv1/node/prefer-transactions/%d"
 
 func (c *NodeRepository) AskForPreference(ctx context.Context, address string, blockNumber int) (*entities.Transaction, error) {
 	var response models.PreferenceResponse
