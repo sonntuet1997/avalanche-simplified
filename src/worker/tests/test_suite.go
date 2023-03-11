@@ -2,6 +2,7 @@ package tests
 
 import (
 	"context"
+	"github.com/go-resty/resty/v2"
 	"github.com/sonntuet1997/avalanche-simplified/worker/bootstrap"
 	"github.com/sonntuet1997/avalanche-simplified/worker/services"
 	"gitlab.com/golibs-starter/golib"
@@ -27,6 +28,9 @@ func init() {
 		fx.Invoke(func(client *http.Client) {
 			httpClient = client
 		}),
+		fx.Invoke(func(client *resty.Client) {
+			restyClient = client
+		}),
 	).Start(context.Background())
 	if err != nil {
 		panic(err)
@@ -36,3 +40,4 @@ func init() {
 var p2pService *services.P2pService
 var consensusService *services.ConsensusService
 var httpClient *http.Client
+var restyClient *resty.Client

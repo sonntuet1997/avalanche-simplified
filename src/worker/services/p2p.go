@@ -3,9 +3,12 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/deliveryhero/pipeline/v2"
 	"github.com/sonntuet1997/avalanche-simplified/worker/constants"
 	"github.com/sonntuet1997/avalanche-simplified/worker/entities"
 	"github.com/sonntuet1997/avalanche-simplified/worker/properties"
+	http_client "github.com/sonntuet1997/avalanche-simplified/worker/repositories/http-client"
+	"gitlab.com/golibs-starter/golib/config"
 	"gitlab.com/golibs-starter/golib/log"
 	"math/rand"
 	"net"
@@ -16,6 +19,8 @@ import (
 type P2pService struct {
 	P2pProperties  *properties.P2pProperties
 	NeighborNodes  map[string]*entities.Node // address -> node
+	NodeRepository *http_client.NodeRepository
+	AppProperties  *config.AppProperties
 	CancelFunction *context.CancelFunc
 	LocalAddresses map[string]interface{}
 	RWMutex        sync.RWMutex
@@ -23,10 +28,14 @@ type P2pService struct {
 
 func NewP2pService(
 	P2pProperties *properties.P2pProperties,
+	AppProperties *config.AppProperties,
+	NodeRepository *http_client.NodeRepository,
 ) *P2pService {
 	service := P2pService{
-		P2pProperties: P2pProperties,
-		NeighborNodes: make(map[string]*entities.Node, 0),
+		P2pProperties:  P2pProperties,
+		NodeRepository: NodeRepository,
+		AppProperties:  AppProperties,
+		NeighborNodes:  make(map[string]*entities.Node, 0),
 	}
 	service.getLocalAddresses()
 	return &service
@@ -54,6 +63,10 @@ const (
 )
 
 func (p *P2pService) SelfIntroduce() error {
+	if p.P2pProperties.DisableBroadcast {
+		log.Debugf("DisableBroadcast SelfIntroduce")
+		return nil
+	}
 	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf(broadcastAddrTmp, p.P2pProperties.BroadcastPort))
 	if err != nil {
 		return fmt.Errorf("failed to ResolveUDPAddr with error: %w", err)
@@ -68,6 +81,56 @@ func (p *P2pService) SelfIntroduce() error {
 	if err != nil {
 		return fmt.Errorf("failed to write message with error: %w", err)
 	}
+	return nil
+}
+
+func (p *P2pService) ScanNodes() error {
+	p.RWMutex.Lock()
+	totalCurrentNodes := len(p.NeighborNodes)
+	p.RWMutex.Unlock()
+	if totalCurrentNodes > p.P2pProperties.MinConnectedNodes {
+		return nil
+	}
+	ctx := context.Background()
+	processor := pipeline.NewProcessor(
+		func(ctx context.Context, nodeNumber int) (string, error) {
+			address, err := p.NodeRepository.CheckHealthAndGetAddress(ctx, fmt.Sprintf(p.P2pProperties.NodeHealthURLTemplate, nodeNumber, p.AppProperties.Port))
+			if err != nil {
+				return "", fmt.Errorf("failed to CheckHealthAndGetAddress with error: %w", err)
+			}
+			log.Infof("[P2pService] scanned address: %+v", address)
+			time.Sleep(50 * time.Millisecond)
+			return address, nil
+		}, func(nodeNumber int, err error) {
+			log.Errorf("[P2pService] failed to process node %+v with error: %w", nodeNumber, err)
+		})
+	inputChan := make(chan int)
+	go func() {
+		for i := 1; i <= p.P2pProperties.TotalNodes; i++ {
+			inputChan <- i
+		}
+		close(inputChan)
+	}()
+	neighborsAddressesChan := pipeline.Process(
+		ctx,
+		processor,
+		inputChan,
+	)
+	collectedNeighborsAddressesChan := pipeline.Collect(ctx, p.P2pProperties.TotalNodes, 5*time.Minute, neighborsAddressesChan)
+	collectedNeighborsAddresses := <-collectedNeighborsAddressesChan
+	neighborNodes := make(map[string]*entities.Node, p.P2pProperties.TotalNodes)
+	for _, neighborsAddress := range collectedNeighborsAddresses {
+		log.Debugf("[P2pService] neighborNodes %+v", neighborsAddress)
+		_, ok := neighborNodes[neighborsAddress]
+		if !ok {
+			neighborNodes[neighborsAddress] = &entities.Node{
+				Address: neighborsAddress,
+			}
+		}
+	}
+	p.RWMutex.Lock()
+	p.NeighborNodes = neighborNodes
+	p.RWMutex.Unlock()
 	return nil
 }
 
@@ -127,6 +190,10 @@ func (p *P2pService) SendLeavingSignals(numberSignals int) error {
 }
 
 func (p *P2pService) ListenForBroadcasts(ctx context.Context) {
+	if p.P2pProperties.DisableBroadcast {
+		log.Debugf("DisableBroadcast ListenForBroadcasts")
+		return
+	}
 	addr, err := net.ResolveUDPAddr(protocol, fmt.Sprintf(portTmp, p.P2pProperties.BroadcastPort))
 	if err != nil {
 		log.Errorf("failed to ResolveUDPAddr with error: %w", err)

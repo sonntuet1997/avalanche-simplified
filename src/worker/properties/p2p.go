@@ -3,9 +3,12 @@ package properties
 import "gitlab.com/golibs-starter/golib/config"
 
 type P2pProperties struct {
-	BroadcastPort     int
-	MinConnectedNodes int
-	ListenToBroadcast bool `default:"true"`
+	BroadcastPort         int
+	DisableBroadcast      bool
+	MinConnectedNodes     int
+	ListenToBroadcast     bool `default:"true"`
+	NodeHealthURLTemplate string
+	TotalNodes            int
 }
 
 func NewP2pProperties(loader config.Loader) (*P2pProperties, error) {

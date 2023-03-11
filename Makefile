@@ -13,7 +13,7 @@ test:
 	cd src/worker && go mod tidy && go test ./...
 
 test-e2e:
-	cd src/worker/functional-tests && go mod tidy && OOS=linux GOARCH=amd64 CGO_ENABLED=0 go test ./... -v
+	cd src/worker/e2e-tests && go mod tidy && OOS=linux GOARCH=amd64 CGO_ENABLED=0 go test ./... -v
 
 vet:
 	cd src/worker && go vet ./... && staticcheck ./...

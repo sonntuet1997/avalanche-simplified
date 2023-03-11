@@ -13,6 +13,7 @@ import (
 	"gitlab.com/golibs-starter/golib/config"
 	"gitlab.com/golibs-starter/golib/web/log"
 	"net/http"
+	url2 "net/url"
 )
 
 type NodeRepository struct {
@@ -60,4 +61,22 @@ func (c *NodeRepository) AskForPreference(ctx context.Context, address string, b
 		return nil, errors.New(response.Meta.Message)
 	}
 	return &response.Data, nil
+}
+
+func (c *NodeRepository) CheckHealthAndGetAddress(ctx context.Context, url string) (string, error) {
+	res, err := c.RestClient.R().SetContext(ctx).Get(url)
+	if err != nil {
+		return "", err
+	}
+	if err != nil {
+		return "", fmt.Errorf("failed to get %s: %w", url, err)
+	}
+	if res.StatusCode() != http.StatusOK {
+		return "", fmt.Errorf("not Ok")
+	}
+	uri, err := url2.ParseRequestURI(res.Request.URL)
+	if err != nil {
+		return "", fmt.Errorf("failed to ParseRequestURI with err: %w", err)
+	}
+	return uri.Hostname(), nil
 }

@@ -4,5 +4,6 @@ app:
     jsonOutputMode: false
   testing:
     toBlockNumber: 60
-    nodesNumber: 30
+    nodesNumber: 200
+    timeout: "1m"
     url: "http://avalanche-simplified-node-%d:8000/v1/node/prefer-transactions/%d"

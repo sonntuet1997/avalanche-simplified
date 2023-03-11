@@ -11,7 +11,7 @@ networks:
 services:
   node:
     deploy:
-      replicas: 30
+      replicas: 200
       resources:
         limits:
           memory: "100M"
