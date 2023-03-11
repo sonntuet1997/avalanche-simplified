@@ -5,25 +5,11 @@ import (
 	"github.com/sonntuet1997/avalanche-simplified/worker/entities"
 	"github.com/stretchr/testify/assert"
 	golibcrontestsuite "gitlab.com/golibs-starter/golib-cron/testsuite"
-	"net/http"
 	"testing"
 )
 
-type WrappedTransport struct {
-	Transport http.RoundTripper
-}
-
-func (t *WrappedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	res1, err1 := t.Transport.RoundTrip(req)
-	req.RemoteAddr = req.URL.Hostname()
-	return res1, err1
-}
-
 func TestScanNodeJob(t *testing.T) {
 	httpmock.ActivateNonDefault(httpClient)
-	restyClient.SetTransport(&WrappedTransport{
-		Transport: httpClient.Transport,
-	})
 	httpmock.RegisterResponder(
 		"GET",
 		"http://node-1:8000/actuator/health",

@@ -13,7 +13,7 @@ import (
 	"gitlab.com/golibs-starter/golib/config"
 	"gitlab.com/golibs-starter/golib/web/log"
 	"net/http"
-	"strings"
+	url2 "net/url"
 )
 
 type NodeRepository struct {
@@ -74,6 +74,9 @@ func (c *NodeRepository) CheckHealthAndGetAddress(ctx context.Context, url strin
 	if res.StatusCode() != http.StatusOK {
 		return "", fmt.Errorf("not Ok")
 	}
-	remoteAddress := res.RawResponse.Request.RemoteAddr
-	return strings.Split(remoteAddress, ":")[0], nil
+	uri, err := url2.ParseRequestURI(res.Request.URL)
+	if err != nil {
+		return "", fmt.Errorf("failed to ParseRequestURI with err: %w", err)
+	}
+	return uri.Hostname(), nil
 }
