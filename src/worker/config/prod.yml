@@ -5,15 +5,21 @@ app:
     jobs:
       selfIntroductionJob:
         expression: "@every 20s"
+        disable: true
+      scanNodeJob:
+        expression: "@every 20s"
       fetchTransactionJob:
         expression: "@every 500ms"
   p2p:
+    disableBroadcast: true
     broadcastPort: 5555
-    minConnectedNodes: 14 # (n) wait until reach a minimum number of participants to start
+    nodeHealthURLTemplate: "http://avalanche-simplified-node-%d:%d/actuator/health"
+    totalNodes: 200
+    minConnectedNodes: 30 # (n) wait until reach a minimum number of participants to start
   consensus:
-    k: 10 #(sample size): between 1 and n
-    alpha: 7 #(quorum size): between 1 and k
-    beta: 10 #(decision threshold): >= 1
+    k: 20 #(sample size): between 1 and n
+    alpha: 14 #(quorum size): between 1 and k
+    beta: 20 #(decision threshold): >= 1
     timeout: "20s" # max duration to collect other nodes preferences
   random:
     range: 2

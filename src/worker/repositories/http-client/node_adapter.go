@@ -61,3 +61,18 @@ func (c *NodeRepository) AskForPreference(ctx context.Context, address string, b
 	}
 	return &response.Data, nil
 }
+
+func (c *NodeRepository) CheckHealthAndGetAddress(ctx context.Context, url string) (string, error) {
+	res, err := c.RestClient.R().SetContext(ctx).EnableTrace().Get(url)
+	if err != nil {
+		return "", err
+	}
+	if err != nil {
+		return "", fmt.Errorf("failed to get %s: %w", url, err)
+	}
+	if res.StatusCode() != http.StatusOK {
+		return "", fmt.Errorf("not Ok")
+	}
+	res.Request.TraceInfo().RemoteAddr.String()
+	return res.Request.TraceInfo().RemoteAddr.String(), nil
+}
