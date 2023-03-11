@@ -4,11 +4,11 @@
 
 ### 1. Change settings
 
-| Environment | Config File                               |
-|-------------|-------------------------------------------|
-| Docker      | `src/worker/config/prod.yml`              |
-| Testing     | `src/worker/config/testing.yml`           |
-| E2E-Testing | `src/worker/functional-tests/default.yml` |
+| Environment | Config File                        |
+|-------------|------------------------------------|
+| Docker      | `src/worker/config/prod.yml`       |
+| Testing     | `src/worker/config/testing.yml`    |
+| E2E-Testing | `src/worker/e2e-tests/default.yml` |
 
 ### 2. Steps to tests E2E
 
