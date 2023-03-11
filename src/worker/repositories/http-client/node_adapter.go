@@ -13,6 +13,7 @@ import (
 	"gitlab.com/golibs-starter/golib/config"
 	"gitlab.com/golibs-starter/golib/web/log"
 	"net/http"
+	"strings"
 )
 
 type NodeRepository struct {
@@ -73,6 +74,6 @@ func (c *NodeRepository) CheckHealthAndGetAddress(ctx context.Context, url strin
 	if res.StatusCode() != http.StatusOK {
 		return "", fmt.Errorf("not Ok")
 	}
-	res.Request.TraceInfo().RemoteAddr.String()
-	return res.Request.TraceInfo().RemoteAddr.String(), nil
+	ipAddress := strings.Split(res.Request.TraceInfo().RemoteAddr.String(), ":")[0]
+	return ipAddress, nil
 }

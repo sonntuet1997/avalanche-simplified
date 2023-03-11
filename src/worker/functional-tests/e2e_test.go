@@ -21,7 +21,7 @@ func TestE2e(t *testing.T) {
 	ctx := context.Background()
 	t.Run("given normal condition when query transactions from nodes should return uniform data", func(t *testing.T) {
 		for blockNumber := 0; blockNumber < testingProperties.ToBlockNumber; blockNumber++ {
-			err := awaitility.Await(time.Second, 15*time.Second, func() bool {
+			err := awaitility.Await(time.Second, testingProperties.Timeout, func() bool {
 				var checkResult *entities.Transaction
 				for nodeIndex := 0; nodeIndex < testingProperties.NodesNumber; nodeIndex++ {
 					var response models.PreferenceResponse

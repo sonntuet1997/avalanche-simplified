@@ -7,9 +7,9 @@ app:
         expression: "@every 20s"
         disable: true
       scanNodeJob:
-        expression: "@every 20s"
+        expression: "@every 10s"
       fetchTransactionJob:
-        expression: "@every 500ms"
+        expression: "@every 50ms"
   p2p:
     disableBroadcast: true
     broadcastPort: 5555
