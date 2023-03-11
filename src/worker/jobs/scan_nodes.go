@@ -7,7 +7,7 @@ import (
 	"go.uber.org/fx"
 )
 
-type ScanNodeJob struct {
+type ScanNodesJob struct {
 	P2pService *services.P2pService
 }
 
@@ -16,17 +16,17 @@ type ScanNodeJobParams struct {
 	P2pService *services.P2pService
 }
 
-func NewScanNodeJob(params ScanNodeJobParams) cron.Job {
-	return &ScanNodeJob{
+func NewScanNodesJob(params ScanNodeJobParams) cron.Job {
+	return &ScanNodesJob{
 		P2pService: params.P2pService,
 	}
 }
 
-func (r *ScanNodeJob) Run() {
-	log.Debugf("[ScanNodeJob] job start")
+func (r *ScanNodesJob) Run() {
+	log.Debugf("[ScanNodesJob] job start")
 	err := r.P2pService.ScanNodes()
 	if err != nil {
-		log.Errorf("[ScanNodeJob] failed to ScanNodes with error: %+v", err)
+		log.Errorf("[ScanNodesJob] failed to ScanNodes with error: %+v", err)
 	}
-	log.Debugf("[ScanNodeJob] job stop")
+	log.Debugf("[ScanNodesJob] job stop")
 }

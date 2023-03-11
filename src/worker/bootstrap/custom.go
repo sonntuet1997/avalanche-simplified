@@ -15,7 +15,7 @@ func Custom() fx.Option {
 	return fx.Options(
 		golibcron.ProvideJob(jobs.NewSelfIntroductionJob),
 		golibcron.ProvideJob(jobs.NewFetchTransactionJob),
-		golibcron.ProvideJob(jobs.NewScanNodeJob),
+		golibcron.ProvideJob(jobs.NewScanNodesJob),
 		golib.ProvideProps(properties.NewConsensusProperties),
 		golib.ProvideProps(properties.NewRandomProperties),
 		fx.Provide(http_client.NewNodeRepository),

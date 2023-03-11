@@ -64,7 +64,7 @@ func (c *NodeRepository) AskForPreference(ctx context.Context, address string, b
 }
 
 func (c *NodeRepository) CheckHealthAndGetAddress(ctx context.Context, url string) (string, error) {
-	res, err := c.RestClient.R().SetContext(ctx).EnableTrace().Get(url)
+	res, err := c.RestClient.R().SetContext(ctx).Get(url)
 	if err != nil {
 		return "", err
 	}
@@ -74,6 +74,6 @@ func (c *NodeRepository) CheckHealthAndGetAddress(ctx context.Context, url strin
 	if res.StatusCode() != http.StatusOK {
 		return "", fmt.Errorf("not Ok")
 	}
-	ipAddress := strings.Split(res.Request.TraceInfo().RemoteAddr.String(), ":")[0]
-	return ipAddress, nil
+	remoteAddress := res.RawResponse.Request.RemoteAddr
+	return strings.Split(remoteAddress, ":")[0], nil
 }

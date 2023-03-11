@@ -6,11 +6,17 @@ app:
       selfIntroductionJob:
         expression: "@every 5s"
         disable: true
+      scanNodesJob:
+        expression: "@every 10s"
+        disable: true
       fetchTransactionJob:
         expression: "@every 500ms"
         disable: true
   p2p:
+    disableBroadcast: false
     broadcastPort: 5555
+    nodeHealthURLTemplate: "http://node-%d:%d/actuator/health"
+    totalNodes: 4
     minConnectedNodes: 4 # (n) wait until reach a minimum number of participants to start
   consensus:
     k: 3 #(sample size): between 1 and n

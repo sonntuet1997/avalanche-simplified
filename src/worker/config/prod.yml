@@ -6,7 +6,7 @@ app:
       selfIntroductionJob:
         expression: "@every 20s"
         disable: true
-      scanNodeJob:
+      scanNodesJob:
         expression: "@every 10s"
       fetchTransactionJob:
         expression: "@every 50ms"
