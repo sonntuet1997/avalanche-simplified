@@ -42,7 +42,7 @@ func TestE2e(t *testing.T) {
 					}
 					checkResult = &response.Data
 				}
-				log.Infof("Passes blockNumber %v with data %v", blockNumber, checkResult)
+				log.Infof("Passed blockNumber %v with data %v", blockNumber, checkResult)
 				return true
 			})
 			assert.Nil(t, err)

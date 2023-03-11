@@ -4,5 +4,5 @@ app:
     jsonOutputMode: false
   testing:
     toBlockNumber: 60
-    nodesNumber: 25
-    url: "http://avalanche-simplyfied-node-%d:8000/v1/node/prefer-transactions/%d"
+    nodesNumber: 30
+    url: "http://avalanche-simplified-node-%d:8000/v1/node/prefer-transactions/%d"

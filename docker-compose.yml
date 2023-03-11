@@ -6,12 +6,12 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 192.168.0.0/16
+        - subnet: 10.10.0.0/16
 
 services:
   node:
     deploy:
-      replicas: 25
+      replicas: 30
       resources:
         limits:
           memory: "100M"
